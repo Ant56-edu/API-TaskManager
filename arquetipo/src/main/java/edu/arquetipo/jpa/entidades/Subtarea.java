@@ -2,6 +2,7 @@ package edu.arquetipo.jpa.entidades;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.*;
@@ -14,24 +15,23 @@ public class Subtarea {
     private Long id;
 
     @ManyToMany
-    Set<Usuario> Usuarios;
+    @JoinTable(name = "subtarea_empleados", joinColumns = @JoinColumn(name = "subtarea_id"), inverseJoinColumns = @JoinColumn(name = "usuario_id"))
+    private Set<Usuario> empleadosAsignados = new HashSet<>();
 
     @ManyToOne
-    @JoinColumn(name = "Tarea")
-    Set<Tarea> tareas;
+    @JoinColumn(name = "tarea_id")
+    private Tarea tareaAsociada; // must match 'mappedBy' in Tarea
 
     private String nombre;
     private LocalDate fechaCreacion;
-    private Usuario[] empleadosAsignados;
-    private Tarea[] tareaAsociada;
 
     // Constructor sin argumentos
     public Subtarea() {
     }
 
     // Constructor para testing y registro de usuarios
-    public Subtarea(Usuario[] empleadosAsignados, LocalDate fechaCreacion, String nombre,
-            Tarea[] tareaAsociada) {
+    public Subtarea(Set<Usuario> empleadosAsignados, LocalDate fechaCreacion, String nombre,
+            Tarea tareaAsociada) {
         this.empleadosAsignados = empleadosAsignados;
         this.fechaCreacion = fechaCreacion;
         this.nombre = nombre;
@@ -41,8 +41,8 @@ public class Subtarea {
     @Override
     public String toString() {
         return "Subtarea [id=" + id + ", nombre=" + nombre + ", fechaCreacion=" + fechaCreacion
-                + ", empleadosAsignados=" + Arrays.toString(empleadosAsignados) + ", tareaAsociada="
-                + Arrays.toString(tareaAsociada) + "]";
+                + ", empleadosAsignados=" + Arrays.toString(empleadosAsignados.toArray()) + ", tareaAsociada="
+                + tareaAsociada.toString() + "]";
     }
 
     // Getters y Setters
@@ -70,19 +70,19 @@ public class Subtarea {
         this.fechaCreacion = fechaCreacion;
     }
 
-    public Usuario[] getEmpleadosAsignados() {
+    public Set<Usuario> getEmpleadosAsignados() {
         return empleadosAsignados;
     }
 
-    public void setEmpleadosAsignados(Usuario[] empleadosAsignados) {
+    public void setEmpleadosAsignados(Set<Usuario> empleadosAsignados) {
         this.empleadosAsignados = empleadosAsignados;
     }
 
-    public Tarea[] getTareaAsociada() {
+    public Tarea getTareaAsociada() {
         return tareaAsociada;
     }
 
-    public void setTareaAsociada(Tarea[] tareaAsociada) {
+    public void setTareaAsociada(Tarea tareaAsociada) {
         this.tareaAsociada = tareaAsociada;
     }
 

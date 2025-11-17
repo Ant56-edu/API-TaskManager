@@ -2,8 +2,11 @@ package edu.arquetipo.jpa.servicios;
 
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import edu.arquetipo.jpa.entidades.Comentario;
 
+@Service
 public class OperativaComentarioImplementacion implements OperativaComentarioInterfaz {
 
     @Override

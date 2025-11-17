@@ -13,7 +13,7 @@ public class Usuario {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "Clientes")
+    @JoinColumn(name = "cliente_id")
     Cliente cliente;
 
     @ManyToMany

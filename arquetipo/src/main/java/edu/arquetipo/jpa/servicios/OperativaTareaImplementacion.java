@@ -1,9 +1,14 @@
 package edu.arquetipo.jpa.servicios;
 
+import java.util.Set;
+
+import org.springframework.stereotype.Service;
+
 import edu.arquetipo.jpa.dao.TareaDAO;
 import edu.arquetipo.jpa.entidades.Tarea;
 import edu.arquetipo.jpa.entidades.Usuario;
 
+@Service
 public class OperativaTareaImplementacion implements OperativaTareaInterfaz {
 
     TareaDAO dao = new TareaDAO();
@@ -37,7 +42,7 @@ public class OperativaTareaImplementacion implements OperativaTareaInterfaz {
             case "empleados" -> {
                 // Se mantiene 'null' si la intención es desasignar o es un marcador de valor
                 // faltante.
-                Usuario[] nuevosEmpleados = null;
+                Set<Usuario> nuevosEmpleados = null;
                 dao.actualizarEmpleadosAsignados(id, nuevosEmpleados);
                 return dao.buscar(id);
             }

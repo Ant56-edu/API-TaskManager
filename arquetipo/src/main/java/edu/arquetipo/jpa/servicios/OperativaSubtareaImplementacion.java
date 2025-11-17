@@ -2,8 +2,11 @@ package edu.arquetipo.jpa.servicios;
 
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import edu.arquetipo.jpa.entidades.Subtarea;
 
+@Service
 public class OperativaSubtareaImplementacion implements OperativaSubtareaInterfaz {
 
     @Override

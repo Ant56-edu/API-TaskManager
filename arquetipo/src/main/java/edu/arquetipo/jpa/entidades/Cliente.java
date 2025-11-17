@@ -11,7 +11,7 @@ public class Cliente {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "Usuarios")
+    @OneToMany(mappedBy = "cliente")
     Set<Usuario> usuarios;
 
     private String nombre;

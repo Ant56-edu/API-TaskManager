@@ -3,9 +3,13 @@ package edu.arquetipo.jpa.servicios;
 import java.util.List;
 
 // Se elimina la importación de Inicio, ya que la capa de servicio no debe manejar I/O.
+
+import org.springframework.stereotype.Service;
+
 import edu.arquetipo.jpa.dao.UsuarioDAO;
 import edu.arquetipo.jpa.entidades.Usuario;
 
+@Service
 public class OperativaUsuarioImplementacion implements OperativaUsuarioInterfaz {
 
     UsuarioDAO dao = new UsuarioDAO();
@@ -23,7 +27,7 @@ public class OperativaUsuarioImplementacion implements OperativaUsuarioInterfaz 
 
     @Override
     public Usuario editarUsuario(long id, Usuario usuarioActualizado) {
-        
+
         return dao.actualizar(usuarioActualizado);
     }
 

@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.stereotype.Service;
+
 import edu.arquetipo.jpa.entidades.Usuario;
 
+@Service
 public class OperativaAuthImplementacion implements OperativaAuthInterfaz {
 
     @Override

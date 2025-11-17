@@ -1,5 +1,7 @@
 package edu.arquetipo.jpa.dao;
 
+import java.util.Set;
+
 import edu.arquetipo.jpa.entidades.Tarea;
 import edu.arquetipo.jpa.entidades.Usuario;
 import jakarta.persistence.EntityManager;
@@ -78,7 +80,7 @@ public class TareaDAO {
      * @param id              El ID de la tarea.
      * @param nuevosEmpleados La nueva lista de empleados (o null/vacía).
      */
-    public void actualizarEmpleadosAsignados(Long id, Usuario[] nuevosEmpleados) {
+    public void actualizarEmpleadosAsignados(Long id, Set<Usuario> nuevosEmpleados) {
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
         try {

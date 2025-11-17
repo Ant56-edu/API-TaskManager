@@ -12,11 +12,13 @@ public class Comentario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "Usuarios")
-    Set<Usuario> usuarios;
+    @ManyToOne
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario; // This is the field name
 
-    @OneToMany(mappedBy = "Tareas")
-    Set<Tarea> tareas;
+    @ManyToOne
+    @JoinColumn(name = "tarea_id")
+    private Tarea tarea; // This is the field name
 
     private Long idTarea;
     private Long idUsuario;
