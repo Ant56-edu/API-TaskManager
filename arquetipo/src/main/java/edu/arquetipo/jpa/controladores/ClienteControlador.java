@@ -38,18 +38,6 @@ public class ClienteControlador {
     }
 
     /**
-     * GET: Lista todos los clientes.
-     * Ruta: /api/clientes/listado
-     * 
-     * @return Lista de todos los clientes.
-     */
-    @GetMapping("/listado")
-    public List<Cliente> listarTodosClientes() {
-        // Se asume la existencia de un método listarTodosClientes en el servicio
-        return clienteInterfaz.listarTodosClientes();
-    }
-
-    /**
      * GET: Busca un cliente por ID.
      * Ruta: /api/clientes/{id}
      * 
@@ -77,10 +65,11 @@ public class ClienteControlador {
      * @return 200 OK y el cliente actualizado, o 404 Not Found.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Cliente> actualizarCliente(@PathVariable Long id, @RequestBody Cliente clienteActualizado) {
+    public ResponseEntity<Cliente> actualizarCliente(@PathVariable Long id, @RequestBody Cliente clienteActualizado,
+            String cosaACambiar) {
 
         // Se asume la existencia de un método editarCliente que toma el ID y el objeto
-        Cliente clienteEditado = clienteInterfaz.editarCliente(id, clienteActualizado);
+        Cliente clienteEditado = clienteInterfaz.editarCliente(id, clienteActualizado, cosaACambiar);
 
         if (clienteEditado != null) {
             return ResponseEntity.ok(clienteEditado);

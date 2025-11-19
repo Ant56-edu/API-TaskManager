@@ -31,15 +31,25 @@ public class Usuario {
     private int tlf;
     private String contrasena;
 
+    public Usuario(Cliente cliente, String contrasena, String correo, LocalDate fechaNacimiento, Long id, String nombre,
+            Set<RegistroHorario> registros, String rol, Set<Subtarea> subtareas, int tlf) {
+        this.cliente = cliente;
+        this.contrasena = contrasena;
+        this.correo = correo;
+        this.fechaNacimiento = fechaNacimiento;
+        this.id = id;
+        this.nombre = nombre;
+        this.registros = registros;
+        this.rol = rol;
+        this.subtareas = subtareas;
+        this.tlf = tlf;
+    }
+
     @Override
     public String toString() {
         return "Usuario [Id=" + id + "\n Nombre=" + nombre + "\n Fecha de nacimiento=" + fechaNacimiento + "\n Rol="
                 + rol
                 + "\n Email=" + correo + "\n Teléfono=" + tlf + "]";
-    }
-
-    // Constructor sin argumentos
-    public Usuario() {
     }
 
     // Constructor para testing y registro de usuarios

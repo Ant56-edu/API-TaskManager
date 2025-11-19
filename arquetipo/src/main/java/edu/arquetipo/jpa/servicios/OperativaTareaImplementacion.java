@@ -11,7 +11,11 @@ import edu.arquetipo.jpa.entidades.Usuario;
 @Service
 public class OperativaTareaImplementacion implements OperativaTareaInterfaz {
 
-    TareaDAO dao = new TareaDAO();
+    private final TareaDAO dao;
+
+    public OperativaTareaImplementacion(TareaDAO dao) {
+        this.dao = dao;
+    }
 
     @Override
     public Tarea buscarTarea(long id) {
@@ -24,30 +28,20 @@ public class OperativaTareaImplementacion implements OperativaTareaInterfaz {
         return dao.buscar(tarea.getId());
     }
 
-    /**
-     * NOTA IMPORTANTE: Este método de actualización es defectuoso por diseño
-     * (no permite pasar el nuevo valor como parámetro). Se han ajustado los valores
-     * para usar marcadores o mantener 'null' si la intención es desasignar.
-     */
     @Override
     public Tarea editarDetalles(long id, String cosaACambiar) {
         switch (cosaACambiar) {
             case "gestor" -> {
-                // Se mantiene 'null' si la intención es desasignar o es un marcador de valor
-                // faltante.
                 Usuario nuevoGestor = null;
                 dao.actualizarGestor(id, nuevoGestor);
                 return dao.buscar(id);
             }
             case "empleados" -> {
-                // Se mantiene 'null' si la intención es desasignar o es un marcador de valor
-                // faltante.
                 Set<Usuario> nuevosEmpleados = null;
                 dao.actualizarEmpleadosAsignados(id, nuevosEmpleados);
                 return dao.buscar(id);
             }
             case "estado" -> {
-                // El nuevo estado (String) debería venir como parámetro. Se usa un marcador.
                 String estado = "ESTADO_PENDIENTE_ACTUALIZACION";
                 dao.actualizarEstado(id, estado);
                 return dao.buscar(id);

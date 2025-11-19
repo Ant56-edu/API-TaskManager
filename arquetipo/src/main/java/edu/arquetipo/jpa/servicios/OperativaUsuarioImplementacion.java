@@ -12,7 +12,11 @@ import edu.arquetipo.jpa.entidades.Usuario;
 @Service
 public class OperativaUsuarioImplementacion implements OperativaUsuarioInterfaz {
 
-    UsuarioDAO dao = new UsuarioDAO();
+    private final UsuarioDAO dao;
+
+    public OperativaUsuarioImplementacion(UsuarioDAO dao) {
+        this.dao = dao;
+    }
 
     @Override
     public Usuario buscarUsuario(long id) {

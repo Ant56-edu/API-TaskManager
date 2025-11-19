@@ -1,6 +1,8 @@
 package edu.arquetipo.jpa.controladores;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 import edu.arquetipo.jpa.entidades.Usuario;
 import edu.arquetipo.jpa.servicios.OperativaUsuarioInterfaz; // Asumido
@@ -9,6 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import edu.arquetipo.jpa.entidades.Cliente;
+import edu.arquetipo.jpa.entidades.RegistroHorario;
+import edu.arquetipo.jpa.entidades.Subtarea;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -31,8 +37,13 @@ public class UsuarioControlador {
      * @return 201 Created y el usuario guardado.
      */
     @PostMapping("/nueva")
-    public ResponseEntity<Usuario> crearUsuario(@RequestBody Usuario usuario) {
+    public ResponseEntity<Usuario> crearUsuario(@RequestBody Cliente cliente, String contrasena, String correo,
+            LocalDate fechaNacimiento, Long id, String nombre, Set<RegistroHorario> registros, String rol,
+            Set<Subtarea> subtareas, int tlf) {
         // Se asume la existencia de un método crearUsuario en el servicio
+        Usuario usuario = new Usuario(cliente, contrasena, correo, fechaNacimiento, id, nombre, registros, rol,
+                subtareas,
+                tlf);
         Usuario nuevoUsuario = usuarioInterfaz.crearUsuario(usuario);
         return new ResponseEntity<>(nuevoUsuario, HttpStatus.CREATED);
     }

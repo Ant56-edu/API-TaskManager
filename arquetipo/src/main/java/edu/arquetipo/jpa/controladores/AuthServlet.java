@@ -133,11 +133,10 @@ public class AuthServlet extends HttpServlet {
                     // 3. Si es válido, actualizar la contraseña usando el DAO refactorizado
 
                     // El usuario debe ser gestionado por JPA o al menos ser un DTO con el ID
-                    Usuario usuarioAActualizar = new Usuario();
-                    usuarioAActualizar.setId(usuario.getId()); // Usamos el ID del usuario encontrado
-                    usuarioAActualizar.setContrasena(changeReq.newPassword); // Solo seteamos la nueva contraseña
+                    usuario.setId(usuario.getId()); // Usamos el ID del usuario encontrado
+                    usuario.setContrasena(changeReq.newPassword); // Solo seteamos la nueva contraseña
 
-                    dao.actualizar(usuarioAActualizar); // Usamos el método refactorizado
+                    dao.actualizar(usuario); // Usamos el método refactorizado
 
                     res.getWriter().write("{\"message\": \"Contraseña actualizada exitosamente\"}");
 

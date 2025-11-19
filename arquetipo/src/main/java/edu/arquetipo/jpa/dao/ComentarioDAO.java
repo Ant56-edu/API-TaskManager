@@ -1,13 +1,17 @@
 package edu.arquetipo.jpa.dao;
 
+import org.springframework.stereotype.Repository;
+
 import edu.arquetipo.jpa.entidades.Comentario;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 
+@Repository
 public class ComentarioDAO {
 
-    private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("alumnosPU");
+    @PersistenceContext
+    private EntityManager em;
 
     /**
      * Busca un Comentario por su clave primaria (ID).
@@ -15,13 +19,9 @@ public class ComentarioDAO {
      * @param id La clave primaria del comentario.
      * @return El objeto Comentario encontrado, o null si no existe.
      */
+    @Transactional
     public Comentario buscar(Long id) {
-        EntityManager em = emf.createEntityManager();
-        try {
-            return em.find(Comentario.class, id);
-        } finally {
-            em.close();
-        }
+        return em.find(Comentario.class, id);
     }
 
     /**
@@ -29,20 +29,9 @@ public class ComentarioDAO {
      *
      * @param comentario El objeto Comentario a persistir.
      */
+    @Transactional
     public void insertar(Comentario comentario) {
-        EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
-        try {
-            em.persist(comentario);
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            e.getMessage();
-        } finally {
-            em.close();
-        }
+        em.persist(comentario);
     }
 
     /**
@@ -51,23 +40,11 @@ public class ComentarioDAO {
      * @param idComentario   El ID del comentario a actualizar.
      * @param nuevoContenido El nuevo texto para el comentario.
      */
+    @Transactional
     public void actualizarContenido(Long idComentario, String nuevoContenido) {
-        EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
-        try {
-            Comentario comentarioEncontrado = em.find(Comentario.class, idComentario);
-
-            if (comentarioEncontrado != null) {
-                comentarioEncontrado.setContenido(nuevoContenido);
-            }
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            e.getMessage();
-        } finally {
-            em.close();
+        Comentario comentarioEncontrado = em.find(Comentario.class, idComentario);
+        if (comentarioEncontrado != null) {
+            comentarioEncontrado.setContenido(nuevoContenido);
         }
     }
 
@@ -76,29 +53,12 @@ public class ComentarioDAO {
      *
      * @param id El ID del comentario a borrar.
      */
+    @Transactional
     public void borrarComentario(Long id) {
-        EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
-        try {
-            Comentario comentarioEncontrado = em.find(Comentario.class, id);
+        Comentario comentarioEncontrado = em.find(Comentario.class, id);
 
-            if (comentarioEncontrado != null) {
-                em.remove(comentarioEncontrado);
-            }
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            e.getMessage();
-        } finally {
-            em.close();
-        }
-    }
-
-    public static void cerrarFactory() {
-        if (emf != null && emf.isOpen()) {
-            emf.close();
+        if (comentarioEncontrado != null) {
+            em.remove(comentarioEncontrado);
         }
     }
 }

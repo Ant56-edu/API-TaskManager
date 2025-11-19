@@ -1,13 +1,17 @@
 package edu.arquetipo.jpa.dao;
 
+import org.springframework.stereotype.Repository;
+
 import edu.arquetipo.jpa.entidades.Cliente;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 
+@Repository
 public class ClienteDAO {
 
-    private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("alumnosPU");
+    @PersistenceContext
+    private EntityManager em;
 
     /**
      * Busca un Cliente por su clave primaria (ID).
@@ -15,13 +19,9 @@ public class ClienteDAO {
      * @param id La clave primaria del cliente.
      * @return El objeto Cliente encontrado, o null si no existe.
      */
+    @Transactional
     public Cliente buscar(Long id) {
-        EntityManager em = emf.createEntityManager();
-        try {
-            return em.find(Cliente.class, id);
-        } finally {
-            em.close();
-        }
+        return em.find(Cliente.class, id);
     }
 
     /**
@@ -29,20 +29,9 @@ public class ClienteDAO {
      *
      * @param cliente El objeto Cliente a persistir.
      */
+    @Transactional
     public void insertar(Cliente cliente) {
-        EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
-        try {
-            em.persist(cliente);
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            e.printStackTrace();
-        } finally {
-            em.close();
-        }
+        em.persist(cliente);
     }
 
     /**
@@ -51,23 +40,12 @@ public class ClienteDAO {
      * @param id          El ID del cliente a actualizar.
      * @param nuevoNombre El nuevo nombre para el cliente.
      */
+    @Transactional
     public void actualizarNombre(Long id, String nuevoNombre) {
-        EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
-        try {
-            Cliente clienteEncontrado = em.find(Cliente.class, id);
+        Cliente clienteEncontrado = em.find(Cliente.class, id);
 
-            if (clienteEncontrado != null) {
-                clienteEncontrado.setNombre(nuevoNombre);
-            }
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            e.printStackTrace();
-        } finally {
-            em.close();
+        if (clienteEncontrado != null) {
+            clienteEncontrado.setNombre(nuevoNombre);
         }
     }
 
@@ -77,22 +55,11 @@ public class ClienteDAO {
      * @param id           El ID del cliente a actualizar.
      * @param nuevoDominio El nuevo dominio web.
      */
+    @Transactional
     public void actualizarDominio(Long id, String nuevoDominio) {
-        EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
-        try {
-            Cliente clienteEncontrado = em.find(Cliente.class, id);
-            if (clienteEncontrado != null) {
-                clienteEncontrado.setDominioWeb(nuevoDominio);
-            }
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            e.printStackTrace();
-        } finally {
-            em.close();
+        Cliente clienteEncontrado = em.find(Cliente.class, id);
+        if (clienteEncontrado != null) {
+            clienteEncontrado.setDominioWeb(nuevoDominio);
         }
     }
 
@@ -102,22 +69,11 @@ public class ClienteDAO {
      * @param id             El ID del cliente a actualizar.
      * @param nuevaDireccion La nueva dirección.
      */
+    @Transactional
     public void actualizarDireccion(Long id, String nuevaDireccion) {
-        EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
-        try {
-            Cliente clienteEncontrado = em.find(Cliente.class, id);
-            if (clienteEncontrado != null) {
-                clienteEncontrado.setDireccion(nuevaDireccion);
-            }
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            e.printStackTrace();
-        } finally {
-            em.close();
+        Cliente clienteEncontrado = em.find(Cliente.class, id);
+        if (clienteEncontrado != null) {
+            clienteEncontrado.setDireccion(nuevaDireccion);
         }
     }
 
@@ -127,22 +83,11 @@ public class ClienteDAO {
      * @param id            El ID del cliente a actualizar.
      * @param nuevoTelefono El nuevo número de teléfono.
      */
+    @Transactional
     public void actualizarTelefono(Long id, int nuevoTelefono) {
-        EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
-        try {
-            Cliente clienteEncontrado = em.find(Cliente.class, id);
-            if (clienteEncontrado != null) {
-                clienteEncontrado.setTlf(nuevoTelefono);
-            }
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            e.printStackTrace();
-        } finally {
-            em.close();
+        Cliente clienteEncontrado = em.find(Cliente.class, id);
+        if (clienteEncontrado != null) {
+            clienteEncontrado.setTlf(nuevoTelefono);
         }
     }
 
@@ -151,32 +96,15 @@ public class ClienteDAO {
      *
      * @param id El ID del cliente a borrar.
      */
-    public void borrarCliente(Long id) {
-        EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
-        try {
-            Cliente clienteEncontrado = em.find(Cliente.class, id);
+    @Transactional
+    public boolean borrarCliente(Long id) {
+        boolean borrado = false;
+        Cliente clienteEncontrado = em.find(Cliente.class, id);
 
-            if (clienteEncontrado != null) {
-                em.remove(clienteEncontrado);
-            }
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            e.printStackTrace();
-        } finally {
-            em.close();
+        if (clienteEncontrado != null) {
+            em.remove(clienteEncontrado);
+            borrado = true;
         }
-    }
-
-    /**
-     * Cierra el EntityManagerFactory. Debe llamarse al final de la aplicación.
-     */
-    public static void cerrarFactory() {
-        if (emf != null && emf.isOpen()) {
-            emf.close();
-        }
+        return borrado;
     }
 }

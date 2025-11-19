@@ -1,42 +1,54 @@
 package edu.arquetipo.jpa.servicios;
 
-import java.util.List;
-
 import org.springframework.stereotype.Service;
 
+import edu.arquetipo.jpa.dao.ClienteDAO;
 import edu.arquetipo.jpa.entidades.Cliente;
 
 @Service
 public class OperativaClienteImplementacion implements OperativaClienteInterfaz {
 
-    @Override
-    public Cliente crearCliente(Cliente cliente) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'crearCliente'");
+    private final ClienteDAO dao;
+
+    public OperativaClienteImplementacion(ClienteDAO dao) {
+        this.dao = dao;
     }
 
     @Override
-    public List<Cliente> listarTodosClientes() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'listarTodosClientes'");
+    public Cliente crearCliente(Cliente cliente) {
+        dao.insertar(cliente);
+        return dao.buscar(cliente.getId());
     }
 
     @Override
     public Cliente buscarCliente(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'buscarCliente'");
+        return dao.buscar(id);
     }
 
     @Override
-    public Cliente editarCliente(Long id, Cliente clienteActualizado) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'editarCliente'");
+    public Cliente editarCliente(Long id, Cliente cliente, String cosaACambiar) {
+        switch (cosaACambiar) {
+            case "nombre":
+                dao.actualizarNombre(id, cliente.getNombre());
+                break;
+            case "dominioWeb":
+                dao.actualizarDominio(id, cliente.getDominioWeb());
+                break;
+            case "direccion":
+                dao.actualizarDireccion(id, cliente.getDireccion());
+                break;
+            case "telefono":
+                dao.actualizarTelefono(id, cliente.getTlf());
+                break;
+            default:
+                System.out.println("Opción no válida");
+        }
+        return dao.buscar(id);
     }
 
     @Override
     public boolean borrarCliente(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'borrarCliente'");
+        return dao.borrarCliente(id);
     }
 
 }

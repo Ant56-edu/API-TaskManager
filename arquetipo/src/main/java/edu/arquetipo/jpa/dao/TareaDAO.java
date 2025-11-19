@@ -2,15 +2,19 @@ package edu.arquetipo.jpa.dao;
 
 import java.util.Set;
 
+import org.springframework.stereotype.Repository;
+
 import edu.arquetipo.jpa.entidades.Tarea;
 import edu.arquetipo.jpa.entidades.Usuario;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 
+@Repository
 public class TareaDAO {
 
-    private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("alumnosPU");
+    @PersistenceContext
+    private EntityManager em;
 
     /**
      * Busca una Tarea por su clave primaria (ID).
@@ -18,13 +22,9 @@ public class TareaDAO {
      * @param id La clave primaria de la tarea.
      * @return El objeto Tarea encontrado, o null si no existe.
      */
+    @Transactional
     public Tarea buscar(Long id) {
-        EntityManager em = emf.createEntityManager();
-        try {
-            return em.find(Tarea.class, id);
-        } finally {
-            em.close();
-        }
+        return em.find(Tarea.class, id);
     }
 
     /**
@@ -32,20 +32,9 @@ public class TareaDAO {
      *
      * @param tarea El objeto Tarea a persistir.
      */
+    @Transactional
     public void insertar(Tarea tarea) {
-        EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
-        try {
-            em.persist(tarea);
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            e.printStackTrace();
-        } finally {
-            em.close();
-        }
+        em.persist(tarea);
     }
 
     /**
@@ -54,23 +43,12 @@ public class TareaDAO {
      * @param id          El ID de la tarea a actualizar.
      * @param nuevoNombre El nuevo nombre para la tarea.
      */
+    @Transactional
     public void actualizarNombre(Long id, String nuevoNombre) {
-        EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
-        try {
-            Tarea tareaEncontrada = em.find(Tarea.class, id);
+        Tarea tareaEncontrada = em.find(Tarea.class, id);
 
-            if (tareaEncontrada != null) {
-                tareaEncontrada.setNombre(nuevoNombre);
-            }
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            e.printStackTrace();
-        } finally {
-            em.close();
+        if (tareaEncontrada != null) {
+            tareaEncontrada.setNombre(nuevoNombre);
         }
     }
 
@@ -80,23 +58,12 @@ public class TareaDAO {
      * @param id              El ID de la tarea.
      * @param nuevosEmpleados La nueva lista de empleados (o null/vacía).
      */
+    @Transactional
     public void actualizarEmpleadosAsignados(Long id, Set<Usuario> nuevosEmpleados) {
-        EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
-        try {
-            Tarea tareaEncontrada = em.find(Tarea.class, id);
+        Tarea tareaEncontrada = em.find(Tarea.class, id);
 
-            if (tareaEncontrada != null) {
-                tareaEncontrada.setEmpleadosAsignados(nuevosEmpleados);
-            }
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            e.printStackTrace();
-        } finally {
-            em.close();
+        if (tareaEncontrada != null) {
+            tareaEncontrada.setEmpleadosAsignados(nuevosEmpleados);
         }
     }
 
@@ -106,23 +73,12 @@ public class TareaDAO {
      * @param id          El ID de la tarea.
      * @param nuevoGestor El objeto Usuario que será el nuevo gestor.
      */
+    @Transactional
     public void actualizarGestor(Long id, Usuario nuevoGestor) {
-        EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
-        try {
-            Tarea tareaEncontrada = em.find(Tarea.class, id);
+        Tarea tareaEncontrada = em.find(Tarea.class, id);
 
-            if (tareaEncontrada != null) {
-                tareaEncontrada.setGestorEncargado(nuevoGestor);
-            }
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            e.printStackTrace();
-        } finally {
-            em.close();
+        if (tareaEncontrada != null) {
+            tareaEncontrada.setGestorEncargado(nuevoGestor);
         }
     }
 
@@ -132,23 +88,12 @@ public class TareaDAO {
      * @param id          El ID de la tarea.
      * @param nuevoEstado El nuevo valor del estado (e.g., un String o Enum).
      */
+    @Transactional
     public void actualizarEstado(Long id, String nuevoEstado) {
-        EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
-        try {
-            Tarea tareaEncontrada = em.find(Tarea.class, id);
+        Tarea tareaEncontrada = em.find(Tarea.class, id);
 
-            if (tareaEncontrada != null) {
-                tareaEncontrada.setEstadoTarea(nuevoEstado);
-            }
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            e.printStackTrace();
-        } finally {
-            em.close();
+        if (tareaEncontrada != null) {
+            tareaEncontrada.setEstadoTarea(nuevoEstado);
         }
     }
 
@@ -157,33 +102,12 @@ public class TareaDAO {
      *
      * @param id El ID de la tarea a borrar.
      */
+    @Transactional
     public void borrar(Long id) {
-        EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
-        try {
-            Tarea tareaEncontrada = em.find(Tarea.class, id);
+        Tarea tareaEncontrada = em.find(Tarea.class, id);
 
-            if (tareaEncontrada != null) {
-                em.remove(tareaEncontrada);
-            }
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            e.printStackTrace();
-        } finally {
-            em.close();
-        }
-    }
-
-    /**
-     * Cierra el EntityManagerFactory. Debe llamarse una vez al final de la
-     * aplicación.
-     */
-    public static void cerrarFactory() {
-        if (emf != null && emf.isOpen()) {
-            emf.close();
+        if (tareaEncontrada != null) {
+            em.remove(tareaEncontrada);
         }
     }
 }

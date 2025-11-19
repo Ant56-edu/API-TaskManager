@@ -1,14 +1,19 @@
 package edu.arquetipo.jpa.dao;
 
 import java.time.LocalTime;
+
+import org.springframework.stereotype.Repository;
+
 import edu.arquetipo.jpa.entidades.RegistroHorario;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 
+@Repository
 public class RegistroHorarioDAO {
 
-    private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("alumnosPU");
+    @PersistenceContext
+    private EntityManager em;
 
     /**
      * Busca un RegistroHorario por su clave primaria (ID).
@@ -16,13 +21,9 @@ public class RegistroHorarioDAO {
      * @param id La clave primaria del registro.
      * @return El objeto RegistroHorario encontrado, o null si no existe.
      */
+    @Transactional
     public RegistroHorario buscar(Long id) {
-        EntityManager em = emf.createEntityManager();
-        try {
-            return em.find(RegistroHorario.class, id);
-        } finally {
-            em.close();
-        }
+        return em.find(RegistroHorario.class, id);
     }
 
     /**
@@ -30,20 +31,9 @@ public class RegistroHorarioDAO {
      *
      * @param registro El objeto RegistroHorario a persistir.
      */
+    @Transactional
     public void insertar(RegistroHorario registro) {
-        EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
-        try {
-            em.persist(registro);
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            e.getMessage();
-        } finally {
-            em.close();
-        }
+        em.persist(registro);
     }
 
     /**
@@ -52,23 +42,12 @@ public class RegistroHorarioDAO {
      * @param id           El ID del registro a actualizar.
      * @param nuevoCheckIn La nueva hora de CheckIn.
      */
+    @Transactional
     public void actualizarCheckIn(Long id, LocalTime nuevoCheckIn) {
-        EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
-        try {
-            RegistroHorario registroEncontrado = em.find(RegistroHorario.class, id);
+        RegistroHorario registroEncontrado = em.find(RegistroHorario.class, id);
 
-            if (registroEncontrado != null) {
-                registroEncontrado.setCheckIn(nuevoCheckIn);
-            }
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            e.getMessage();
-        } finally {
-            em.close();
+        if (registroEncontrado != null) {
+            registroEncontrado.setCheckIn(nuevoCheckIn);
         }
     }
 
@@ -78,32 +57,12 @@ public class RegistroHorarioDAO {
      * @param id            El ID del registro a actualizar.
      * @param nuevoCheckOut La nueva hora de CheckOut.
      */
+    @Transactional
     public void actualizarCheckOut(Long id, LocalTime nuevoCheckOut) {
-        EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
-        try {
-            RegistroHorario registroEncontrado = em.find(RegistroHorario.class, id);
+        RegistroHorario registroEncontrado = em.find(RegistroHorario.class, id);
 
-            if (registroEncontrado != null) {
-                registroEncontrado.setCheckOut(nuevoCheckOut);
-            }
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            e.getMessage();
-        } finally {
-            em.close();
-        }
-    }
-
-    /**
-     * Cierra el EntityManagerFactory. Debe llamarse al final de la aplicación.
-     */
-    public static void cerrarFactory() {
-        if (emf != null && emf.isOpen()) {
-            emf.close();
+        if (registroEncontrado != null) {
+            registroEncontrado.setCheckOut(nuevoCheckOut);
         }
     }
 }

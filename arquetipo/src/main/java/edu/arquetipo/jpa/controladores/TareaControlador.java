@@ -16,7 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/tarea")
 public class TareaControlador {
-    OperativaTareaInterfaz tareaInterfaz = new OperativaTareaImplementacion();
+    private final OperativaTareaInterfaz tareaInterfaz;
 
     @Autowired
     public TareaControlador(OperativaTareaInterfaz tareaInterfaz) {
