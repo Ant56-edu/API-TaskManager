@@ -23,6 +23,12 @@ public class ClienteControlador {
         this.clienteInterfaz = clienteInterfaz;
     }
 
+    @GetMapping("/lista")
+    public ResponseEntity<List<Cliente>> mostrarListaClientes() {
+        List<Cliente> lista = clienteInterfaz.mostrarListaClientes();
+        return new ResponseEntity<>(lista, HttpStatus.CREATED);
+    }
+
     /**
      * POST: Crea un nuevo cliente.
      * Ruta: /api/clientes/nueva
@@ -64,12 +70,11 @@ public class ClienteControlador {
      * @param clienteActualizado El objeto Cliente con los datos nuevos.
      * @return 200 OK y el cliente actualizado, o 404 Not Found.
      */
-    @PutMapping("/{id}")
-    public ResponseEntity<Cliente> actualizarCliente(@PathVariable Long id, @RequestBody Cliente clienteActualizado,
-            String cosaACambiar) {
+    @PutMapping("/editar/{id}")
+    public ResponseEntity<Cliente> actualizarCliente(@PathVariable Long id, @RequestBody Cliente clienteActualizado) {
 
         // Se asume la existencia de un método editarCliente que toma el ID y el objeto
-        Cliente clienteEditado = clienteInterfaz.editarCliente(id, clienteActualizado, cosaACambiar);
+        Cliente clienteEditado = clienteInterfaz.editarCliente(id, clienteActualizado);
 
         if (clienteEditado != null) {
             return ResponseEntity.ok(clienteEditado);

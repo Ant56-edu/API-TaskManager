@@ -22,6 +22,19 @@
         <main.class>jpa.Inicio</main.class> <!-- Cambia al nombre de tu clase principal -->
     </properties>
 
+    <build>
+        <plugins>  
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>edu.arquetipo.jpa.Inicio</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    
+
     <dependencies>
         <!-- Driver PostgreSQL -->
         <dependency>

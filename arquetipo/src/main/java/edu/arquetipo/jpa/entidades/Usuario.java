@@ -2,6 +2,9 @@ package edu.arquetipo.jpa.entidades;
 
 import java.time.LocalDate;
 import java.util.Set;
+import java.time.format.DateTimeFormatter;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.*;
 
@@ -13,7 +16,7 @@ public class Usuario {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "cliente_id")
+    @JoinColumn(name = "idCliente")
     Cliente cliente;
 
     @ManyToMany
@@ -24,14 +27,23 @@ public class Usuario {
     @JoinTable(name = "Usuarios_has_Subtareas", joinColumns = @JoinColumn(name = "idSubtarea"), inverseJoinColumns = @JoinColumn(name = "idUsuario"))
     Set<RegistroHorario> registros;
 
+    @Column(name = "nombre")
     private String nombre;
-    private LocalDate fechaNacimiento;
+    @Column(name = "fechaNacimiento")
+    private String fechaNacimiento;
+    @Column(name = "rol")
     private String rol;
+    @Column(name = "correo")
     private String correo;
+    @Column(name = "tlf")
     private int tlf;
+    @Column(name = "contrasena")
     private String contrasena;
 
-    public Usuario(Cliente cliente, String contrasena, String correo, LocalDate fechaNacimiento, Long id, String nombre,
+    public Usuario() {
+    }
+
+    public Usuario(Cliente cliente, String contrasena, String correo, String fechaNacimiento, Long id, String nombre,
             Set<RegistroHorario> registros, String rol, Set<Subtarea> subtareas, int tlf) {
         this.cliente = cliente;
         this.contrasena = contrasena;
@@ -78,11 +90,11 @@ public class Usuario {
         this.nombre = nombre;
     }
 
-    public LocalDate getFechaNacimiento() {
+    public String getFechaNacimiento() {
         return fechaNacimiento;
     }
 
-    public void setFechaNacimiento(LocalDate fechaNacimiento) {
+    public void setFechaNacimiento(String fechaNacimiento) {
         this.fechaNacimiento = fechaNacimiento;
     }
 

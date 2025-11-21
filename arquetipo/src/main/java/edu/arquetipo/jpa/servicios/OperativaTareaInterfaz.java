@@ -8,7 +8,7 @@ public interface OperativaTareaInterfaz {
 
     Tarea crearTarea(Tarea tarea);
 
-    Tarea editarDetalles(long id, String cosaACambiar);
+    Tarea editarDetalles(long id, Tarea tareaActualizada);
 
     void borrarTarea(long id);
 

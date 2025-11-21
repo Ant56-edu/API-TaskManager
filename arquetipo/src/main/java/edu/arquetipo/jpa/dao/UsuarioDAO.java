@@ -139,4 +139,10 @@ public class UsuarioDAO {
         }
         return conclusion;
     }
+
+    @Transactional
+    public List<Usuario> buscarTodos() {
+        TypedQuery<Usuario> query = em.createQuery("SELECT u FROM Usuario u", Usuario.class);
+        return query.getResultList();
+    }
 }

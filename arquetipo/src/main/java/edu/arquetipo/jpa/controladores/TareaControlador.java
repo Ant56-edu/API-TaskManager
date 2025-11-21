@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import edu.arquetipo.jpa.entidades.Tarea;
 import edu.arquetipo.jpa.servicios.OperativaTareaInterfaz;
-import edu.arquetipo.jpa.servicios.OperativaTareaImplementacion;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -53,10 +52,9 @@ public class TareaControlador {
     }
 
     // Update a product by ID.
-    @PutMapping("/{id}/{cosaACambiar}")
-    public ResponseEntity<Tarea> updateTarea(@PathVariable Long id, @RequestBody Tarea tarea,
-            String cosaACambiar) {
-        Tarea tareaActualizada = tareaInterfaz.editarDetalles(id, cosaACambiar);
+    @PutMapping("/actualizar/{id}")
+    public ResponseEntity<Tarea> updateTarea(@PathVariable long id, @RequestBody Tarea tareaActualizada) {
+        tareaActualizada = tareaInterfaz.editarDetalles(id, tareaActualizada);
         return ResponseEntity.ok(tareaActualizada);
     }
 

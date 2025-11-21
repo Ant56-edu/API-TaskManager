@@ -1,5 +1,7 @@
 package edu.arquetipo.jpa.servicios;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import edu.arquetipo.jpa.dao.ClienteDAO;
@@ -15,40 +17,35 @@ public class OperativaClienteImplementacion implements OperativaClienteInterfaz 
     }
 
     @Override
+    public List<Cliente> mostrarListaClientes() {
+        return dao.mostrarListaClientes();
+    }
+
+    @Override
     public Cliente crearCliente(Cliente cliente) {
         dao.insertar(cliente);
-        return dao.buscar(cliente.getId());
+        return dao.buscar(cliente.getNombre());
     }
 
     @Override
-    public Cliente buscarCliente(Long id) {
-        return dao.buscar(id);
+    public Cliente buscarCliente(String nombre) {
+        return dao.buscar(nombre);
     }
 
     @Override
-    public Cliente editarCliente(Long id, Cliente cliente, String cosaACambiar) {
-        switch (cosaACambiar) {
-            case "nombre":
-                dao.actualizarNombre(id, cliente.getNombre());
-                break;
-            case "dominioWeb":
-                dao.actualizarDominio(id, cliente.getDominioWeb());
-                break;
-            case "direccion":
-                dao.actualizarDireccion(id, cliente.getDireccion());
-                break;
-            case "telefono":
-                dao.actualizarTelefono(id, cliente.getTlf());
-                break;
-            default:
-                System.out.println("Opción no válida");
-        }
+    public Cliente editarCliente(Long id, Cliente clienteActualizado) {
+        dao.actualizar(id, clienteActualizado);
         return dao.buscar(id);
     }
 
     @Override
     public boolean borrarCliente(Long id) {
         return dao.borrarCliente(id);
+    }
+
+    @Override
+    public Cliente buscarCliente(Long id) {
+        return dao.buscar(id);
     }
 
 }

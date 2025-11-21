@@ -1,150 +1,133 @@
 package edu.arquetipo.jpa.controladores;
 
-import jakarta.servlet.annotation.WebServlet;
+import edu.arquetipo.jpa.entidades.Usuario;
+import edu.arquetipo.jpa.servicios.OperativaAuthInterfaz;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.Mac;
 
 import com.eatthepath.otp.TimeBasedOneTimePasswordGenerator;
-import com.eatthepath.otp.UncheckedNoSuchAlgorithmException;
 
-import edu.arquetipo.jpa.servicios.OperativaAuthInterfaz;
-import edu.arquetipo.jpa.dao.UsuarioDAO;
-import edu.arquetipo.jpa.entidades.Usuario;
-import edu.arquetipo.jpa.servicios.OperativaAuthImplementacion;
-
-// DTOs (Data Transfer Objects) simples para leer el JSON
-class LoginCredentials {
-    public String email;
-    public String password;
-}
-
-class RecoveryRequest {
-    public String email;
-}
-
-@WebServlet("/api/auth/*")
+@RestController
+@RequestMapping("/api/auth")
 public class AuthServlet extends HttpServlet {
 
-    private ObjectMapper mapper;
-    private OperativaAuthInterfaz auth;
+    private final OperativaAuthInterfaz auth;
 
-    private class PasswordChangeRequest {
-        String email;
-        String newPassword;
-        String token; // Token de un solo uso (OTP)
+    @Autowired
+    public AuthServlet(OperativaAuthInterfaz auth) {
+        this.auth = auth;
     }
 
-    @Override
-    public void init() {
-        this.mapper = new ObjectMapper();
-        this.auth = new OperativaAuthImplementacion();
+    // DTOs
+    public static class LoginCredentials {
+        public String email;
+        public String password;
     }
 
-    // Todo en autenticación es un POST
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        String pathInfo = req.getPathInfo();
-        res.setContentType("application/json");
+    public static class RecoveryRequest {
+        public String email;
+    }
 
-        String jsonBody = req.getReader().lines().collect(Collectors.joining());
-        UsuarioDAO dao = new UsuarioDAO();
+    public static class PasswordChangeRequest {
+        public String email;
+        public String newPassword;
+        public String token; // OTP
+    }
 
-        try {
-            if (pathInfo == null) {
-                res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Acción no especificada");
-                return;
-            }
+    /**
+     * Login de usuario
+     */
+    @PostMapping("/login")
+    public ResponseEntity<Map<String, String>> login(@RequestBody LoginCredentials creds) {
+        String token = auth.login(creds.email, creds.password);
 
-            switch (pathInfo) {
-                case "/login" -> {
-                    // Corresponde a "Página de Login (PC)"
-                    // --- Lógica del servicio de Login ---
-                    LoginCredentials creds = mapper.readValue(jsonBody, LoginCredentials.class);
-
-                    String token = auth.login(creds.email, creds.password);
-                    if (token != null) {
-                        res.getWriter().write("{\"token\": \"" + token + "\"}");
-                    } else {
-                        res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Credenciales inválidas");
-                    }
-                }
-                case "/recover-password" -> {
-                    // Corresponde a "Página de recuperación de contraseñas"
-                    // --- Lógica para cambiar la contraseña ---
-                    RecoveryRequest recovery = mapper.readValue(jsonBody, RecoveryRequest.class);
-                    if (dao.buscar(recovery.email) != null) {
-                        TimeBasedOneTimePasswordGenerator totp = new TimeBasedOneTimePasswordGenerator(
-                                TimeBasedOneTimePasswordGenerator.DEFAULT_TIME_STEP, 6,
-                                TimeBasedOneTimePasswordGenerator.TOTP_ALGORITHM_HMAC_SHA512);
-                        final Key key;
-                        {
-                            final KeyGenerator keyGenerator = KeyGenerator.getInstance(totp.getAlgorithm());
-                            final int macLengthInBytes = Mac.getInstance(totp.getAlgorithm()).getMacLength();
-                            keyGenerator.init(macLengthInBytes * 8);
-                            key = keyGenerator.generateKey();
-                        }
-                        final Instant now = Instant.now();
-                        final Instant later = now.plus(totp.getTimeStep());
-                        totp.generateOneTimePassword(key, later);
-                        res.getWriter().write(
-                                "{\"message\": \"Se ha enviado un token de recuperación a su correo electrónico.\"}");
-                    } else {
-                        res.getWriter().write(
-                                "{\"message\": \"Este correo no está registrado. Contacte con su administrador o algún de sus superiores en la empresa\"}");
-                    }
-                }
-                case "/change-password" -> {
-                    // --- Lógica para actualizar la contraseña usando el token ---
-                    PasswordChangeRequest changeReq = mapper.readValue(jsonBody, PasswordChangeRequest.class);
-
-                    if (changeReq.email == null || changeReq.token == null || changeReq.newPassword == null) {
-                        res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                        res.getWriter().write(
-                                "{\"error\": \"Faltan campos obligatorios: email, token o nueva contraseña.\"}");
-                        return;
-                    }
-
-                    // 1. Buscar el usuario por email
-                    Usuario usuario = dao.buscar(changeReq.email);
-
-                    if (usuario == null) {
-                        res.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                        res.getWriter().write("{\"error\": \"Usuario no encontrado.\"}");
-                        return;
-                    }
-
-                    // 2. Lógica de validación del token (ASUMIMOS QUE ES VÁLIDO o se gestiona en la
-                    // capa de servicio)
-                    // if (!auth.validarToken(changeReq.email, changeReq.token)) { ... }
-
-                    // 3. Si es válido, actualizar la contraseña usando el DAO refactorizado
-
-                    // El usuario debe ser gestionado por JPA o al menos ser un DTO con el ID
-                    usuario.setId(usuario.getId()); // Usamos el ID del usuario encontrado
-                    usuario.setContrasena(changeReq.newPassword); // Solo seteamos la nueva contraseña
-
-                    dao.actualizar(usuario); // Usamos el método refactorizado
-
-                    res.getWriter().write("{\"message\": \"Contraseña actualizada exitosamente\"}");
-
-                }
-                default -> res.sendError(HttpServletResponse.SC_NOT_FOUND, "Ruta de autenticación no encontrada");
-            }
-        } catch (UncheckedNoSuchAlgorithmException | IOException | InvalidKeyException | NoSuchAlgorithmException e) {
-            res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+        if (token != null) {
+            Map<String, String> response = new HashMap<>();
+            response.put("token", token);
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Credenciales inválidas"));
         }
+    }
+
+    /**
+     * Solicitar recuperación de contraseña
+     */
+    @PostMapping("/recover-password")
+    public ResponseEntity<Map<String, String>> recoverPassword(@RequestBody RecoveryRequest request)
+            throws NoSuchAlgorithmException, InvalidKeyException {
+
+        Usuario usuario = auth.buscarUsuarioPorEmail(request.email);
+
+        if (usuario != null) {
+            // Generamos token OTP usando TOTP
+            TimeBasedOneTimePasswordGenerator totp = new TimeBasedOneTimePasswordGenerator();
+            Key key;
+            {
+                KeyGenerator keyGenerator = KeyGenerator.getInstance(totp.getAlgorithm());
+                int macLengthInBytes = Mac.getInstance(totp.getAlgorithm()).getMacLength();
+                keyGenerator.init(macLengthInBytes * 8);
+                key = keyGenerator.generateKey();
+            }
+
+            Instant now = Instant.now();
+            Instant later = now.plus(totp.getTimeStep());
+            int oneTimePassword = totp.generateOneTimePassword(key, later);
+
+            // Enviar token por correo se asume en auth.enviarTokenCorreo()
+            auth.enviarTokenPorCorreo(usuario.getCorreo(), oneTimePassword);
+
+            return ResponseEntity
+                    .ok(Map.of("message", "Se ha enviado un token de recuperación a su correo electrónico."));
+        } else {
+            return ResponseEntity.ok(Map.of("message", "Este correo no está registrado."));
+        }
+    }
+
+    /**
+     * Cambio de contraseña usando token OTP
+     */
+    @PostMapping("/change-password")
+    public ResponseEntity<Map<String, String>> changePassword(@RequestBody PasswordChangeRequest request) {
+
+        if (request.email == null || request.token == null || request.newPassword == null) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "Faltan campos obligatorios: email, token o nueva contraseña."));
+        }
+
+        Usuario usuario = auth.buscarUsuarioPorEmail(request.email);
+
+        if (usuario == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Usuario no encontrado."));
+        }
+
+        // Validación del token OTP (se asume en auth.validarToken)
+        boolean tokenValido = auth.validarToken(request.email, request.token);
+
+        if (!tokenValido) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Token inválido o expirado."));
+        }
+
+        // Actualizamos la contraseña usando la capa de servicio
+        usuario.setContrasena(request.newPassword);
+
+        return ResponseEntity.ok(Map.of("message", "Contraseña actualizada exitosamente."));
     }
 }

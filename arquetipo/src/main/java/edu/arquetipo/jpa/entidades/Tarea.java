@@ -12,7 +12,9 @@ public class Tarea {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "nombre", nullable = false)
     private String nombre;
+    @Column(name = "fechaCreacion", nullable = false)
     private LocalDate fechaCreacion;
     @ManyToMany
     @JoinTable(name = "tarea_empleados", joinColumns = @JoinColumn(name = "tarea_id"), inverseJoinColumns = @JoinColumn(name = "usuario_id"))

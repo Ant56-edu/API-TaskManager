@@ -79,7 +79,7 @@ public class SubtareaControlador {
      * @param subtareaActualizada El objeto Subtarea con los datos nuevos.
      * @return 200 OK y la subtarea actualizada, o 404 Not Found.
      */
-    @PutMapping("/{nombre}")
+    @PutMapping("/actualizar/{nombre}")
     public ResponseEntity<Subtarea> actualizarSubtarea(@PathVariable String nombre,
             @RequestBody Subtarea subtareaActualizada) {
 

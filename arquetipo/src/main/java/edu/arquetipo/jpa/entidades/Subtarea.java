@@ -22,7 +22,9 @@ public class Subtarea {
     @JoinColumn(name = "tarea_id")
     private Tarea tareaAsociada; // must match 'mappedBy' in Tarea
 
+    @Column(name = "nombre", nullable = false)
     private String nombre;
+    @Column(name = "fechaCreacion", nullable = false)
     private LocalDate fechaCreacion;
 
     // Constructor sin argumentos

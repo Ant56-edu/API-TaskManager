@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Set;
 
+import org.hibernate.annotations.ColumnDefault;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -17,8 +19,11 @@ public class RegistroHorario {
     @JoinTable(name = "Usuarios_has_Registros", joinColumns = @JoinColumn(name = "idRegistro"), inverseJoinColumns = @JoinColumn(name = "idUsuario"))
     Set<Usuario> usuarios;
 
+    @Column(name = "fechaRegistro", nullable = false)
     private LocalDate fechaRegistro;
+    @Column(name = "checkIn", nullable = false)
     private LocalTime checkIn;
+    @Column(name = "checkOut", nullable = false)
     private LocalTime checkOut;
 
     public Long getId() {

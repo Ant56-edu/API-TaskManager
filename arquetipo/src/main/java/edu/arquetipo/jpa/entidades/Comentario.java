@@ -1,7 +1,6 @@
 package edu.arquetipo.jpa.entidades;
 
 import java.time.LocalDateTime;
-import java.util.Set;
 
 import jakarta.persistence.*;
 
@@ -20,9 +19,13 @@ public class Comentario {
     @JoinColumn(name = "tarea_id")
     private Tarea tarea; // This is the field name
 
+    @Column(name = "id_tarea")
     private Long idTarea;
+    @Column(name = "id_usuario")
     private Long idUsuario;
+    @Column(name = "contenido")
     private String contenido;
+    @Column(name = "fecha_hora_subida")
     private LocalDateTime fechaHoraSubida;
 
     public Long getId() {

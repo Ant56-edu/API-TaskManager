@@ -1,5 +1,7 @@
 package edu.arquetipo.jpa.dao;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
 import edu.arquetipo.jpa.entidades.Cliente;
@@ -24,6 +26,15 @@ public class ClienteDAO {
         return em.find(Cliente.class, id);
     }
 
+    @Transactional
+    public Cliente buscar(String nombre) {
+        String hql = "SELECT c FROM Cliente c WHERE c.nombre = :nombre";
+        List<Cliente> resultados = em.createQuery(hql, Cliente.class)
+                .setParameter("nombre", nombre)
+                .getResultList();
+        return resultados.isEmpty() ? null : resultados.get(0);
+    }
+
     /**
      * Inserta un nuevo Cliente en la base de datos.
      *
@@ -32,63 +43,6 @@ public class ClienteDAO {
     @Transactional
     public void insertar(Cliente cliente) {
         em.persist(cliente);
-    }
-
-    /**
-     * Actualiza el nombre de un cliente.
-     *
-     * @param id          El ID del cliente a actualizar.
-     * @param nuevoNombre El nuevo nombre para el cliente.
-     */
-    @Transactional
-    public void actualizarNombre(Long id, String nuevoNombre) {
-        Cliente clienteEncontrado = em.find(Cliente.class, id);
-
-        if (clienteEncontrado != null) {
-            clienteEncontrado.setNombre(nuevoNombre);
-        }
-    }
-
-    /**
-     * Actualiza el dominio web de un cliente.
-     *
-     * @param id           El ID del cliente a actualizar.
-     * @param nuevoDominio El nuevo dominio web.
-     */
-    @Transactional
-    public void actualizarDominio(Long id, String nuevoDominio) {
-        Cliente clienteEncontrado = em.find(Cliente.class, id);
-        if (clienteEncontrado != null) {
-            clienteEncontrado.setDominioWeb(nuevoDominio);
-        }
-    }
-
-    /**
-     * Actualiza la dirección de un cliente.
-     *
-     * @param id             El ID del cliente a actualizar.
-     * @param nuevaDireccion La nueva dirección.
-     */
-    @Transactional
-    public void actualizarDireccion(Long id, String nuevaDireccion) {
-        Cliente clienteEncontrado = em.find(Cliente.class, id);
-        if (clienteEncontrado != null) {
-            clienteEncontrado.setDireccion(nuevaDireccion);
-        }
-    }
-
-    /**
-     * Actualiza el teléfono de un cliente.
-     *
-     * @param id            El ID del cliente a actualizar.
-     * @param nuevoTelefono El nuevo número de teléfono.
-     */
-    @Transactional
-    public void actualizarTelefono(Long id, int nuevoTelefono) {
-        Cliente clienteEncontrado = em.find(Cliente.class, id);
-        if (clienteEncontrado != null) {
-            clienteEncontrado.setTlf(nuevoTelefono);
-        }
     }
 
     /**
@@ -106,5 +60,21 @@ public class ClienteDAO {
             borrado = true;
         }
         return borrado;
+    }
+
+    @Transactional
+    public List<Cliente> mostrarListaClientes() {
+        List<Cliente> clientes = em.createQuery("FROM Cliente", Cliente.class).getResultList();
+        return clientes;
+    }
+
+    @Transactional
+    public void actualizar(Long id, Cliente clienteActualizado) {
+        Cliente clienteEncontrado = em.find(Cliente.class, id);
+        if (clienteEncontrado != null) {
+            clienteActualizado.setId(id);
+            em.merge(clienteActualizado);
+            em.close();
+        }
     }
 }

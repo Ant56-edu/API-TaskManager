@@ -14,10 +14,15 @@ public class Cliente {
     @OneToMany(mappedBy = "cliente")
     Set<Usuario> usuarios;
 
+    @Column(name = "nombre")
     private String nombre;
+    @Column(name = "dominioDeWeb")
     private String dominioWeb;
+    @Column(name = "correoContacto")
     private String correoContacto;
+    @Column(name = "direccion")
     private String direccion;
+    @Column(name = "telefono")
     private int tlf;
 
     public Cliente() {

@@ -38,62 +38,17 @@ public class TareaDAO {
     }
 
     /**
-     * Actualiza el nombre de una tarea.
+     * Edita los detalles de una Tarea en la base de datos usando su ID.
      *
-     * @param id          El ID de la tarea a actualizar.
-     * @param nuevoNombre El nuevo nombre para la tarea.
+     * @param id El ID de la tarea a editar.
      */
     @Transactional
-    public void actualizarNombre(Long id, String nuevoNombre) {
+    public void editar(Long id, Tarea tareaActualizada) {
         Tarea tareaEncontrada = em.find(Tarea.class, id);
 
         if (tareaEncontrada != null) {
-            tareaEncontrada.setNombre(nuevoNombre);
-        }
-    }
-
-    /**
-     * Reemplaza la lista de empleados asignados a una tarea.
-     *
-     * @param id              El ID de la tarea.
-     * @param nuevosEmpleados La nueva lista de empleados (o null/vacía).
-     */
-    @Transactional
-    public void actualizarEmpleadosAsignados(Long id, Set<Usuario> nuevosEmpleados) {
-        Tarea tareaEncontrada = em.find(Tarea.class, id);
-
-        if (tareaEncontrada != null) {
-            tareaEncontrada.setEmpleadosAsignados(nuevosEmpleados);
-        }
-    }
-
-    /**
-     * Actualiza el gestor encargado de una tarea.
-     *
-     * @param id          El ID de la tarea.
-     * @param nuevoGestor El objeto Usuario que será el nuevo gestor.
-     */
-    @Transactional
-    public void actualizarGestor(Long id, Usuario nuevoGestor) {
-        Tarea tareaEncontrada = em.find(Tarea.class, id);
-
-        if (tareaEncontrada != null) {
-            tareaEncontrada.setGestorEncargado(nuevoGestor);
-        }
-    }
-
-    /**
-     * Actualiza el estado de una tarea (e.g., a "Completada", "Bloqueada", etc.).
-     *
-     * @param id          El ID de la tarea.
-     * @param nuevoEstado El nuevo valor del estado (e.g., un String o Enum).
-     */
-    @Transactional
-    public void actualizarEstado(Long id, String nuevoEstado) {
-        Tarea tareaEncontrada = em.find(Tarea.class, id);
-
-        if (tareaEncontrada != null) {
-            tareaEncontrada.setEstadoTarea(nuevoEstado);
+            tareaActualizada.setId(id);
+            em.merge(tareaActualizada);
         }
     }
 

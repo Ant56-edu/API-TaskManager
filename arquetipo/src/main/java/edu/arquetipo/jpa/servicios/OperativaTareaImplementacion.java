@@ -29,34 +29,9 @@ public class OperativaTareaImplementacion implements OperativaTareaInterfaz {
     }
 
     @Override
-    public Tarea editarDetalles(long id, String cosaACambiar) {
-        switch (cosaACambiar) {
-            case "gestor" -> {
-                Usuario nuevoGestor = null;
-                dao.actualizarGestor(id, nuevoGestor);
-                return dao.buscar(id);
-            }
-            case "empleados" -> {
-                Set<Usuario> nuevosEmpleados = null;
-                dao.actualizarEmpleadosAsignados(id, nuevosEmpleados);
-                return dao.buscar(id);
-            }
-            case "estado" -> {
-                String estado = "ESTADO_PENDIENTE_ACTUALIZACION";
-                dao.actualizarEstado(id, estado);
-                return dao.buscar(id);
-            }
-            case "nombre" -> {
-                // El nuevo nombre (String) debería venir como parámetro. Se usa un marcador.
-                String nuevoNombre = "NOMBRE_PENDIENTE_ACTUALIZACION";
-                dao.actualizarNombre(id, nuevoNombre);
-                return dao.buscar(id);
-            }
-            default -> {
-                System.err.println("Campo de actualización no reconocido: " + cosaACambiar);
-                return dao.buscar(id);
-            }
-        }
+    public Tarea editarDetalles(long id, Tarea tareaActualizada) {
+        dao.editar(id, tareaActualizada);
+        return dao.buscar(id);
     }
 
     @Override
