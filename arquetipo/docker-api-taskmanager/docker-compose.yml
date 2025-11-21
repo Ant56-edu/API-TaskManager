@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgres:17
+    container_name: db-taskmanager
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypass
+      POSTGRES_DB: mydb
+    ports:
+      - "5432:5432"
+    networks:
+      - backend
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin25
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "4200:4200"
+    depends_on:
+      - db
+    networks:
+      - backend
+
+networks:
+  backend:
+
+volumes:
+  pgdata:
