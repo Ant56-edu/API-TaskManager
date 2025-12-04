@@ -17,7 +17,6 @@ public class Inicio {
         // Arranca la aplicación Spring Boot.
         // Todos los controladores REST estarán disponibles en el puerto por defecto
         // (8080)
-        // o el que definas en application.properties.
         SpringApplication.run(Inicio.class, args);
     }
 }
