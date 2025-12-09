@@ -1,12 +1,9 @@
 package edu.arquetipo.jpa.servicios;
 
-import java.util.Set;
-
 import org.springframework.stereotype.Service;
 
 import edu.arquetipo.jpa.dao.TareaDAO;
 import edu.arquetipo.jpa.entidades.Tarea;
-import edu.arquetipo.jpa.entidades.Usuario;
 
 @Service
 public class OperativaTareaImplementacion implements OperativaTareaInterfaz {
@@ -25,6 +22,7 @@ public class OperativaTareaImplementacion implements OperativaTareaInterfaz {
     @Override
     public Tarea crearTarea(Tarea tarea) {
         dao.insertar(tarea);
+        System.out.println(tarea.toString());
         return dao.buscar(tarea.getId());
     }
 

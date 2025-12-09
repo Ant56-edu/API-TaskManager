@@ -27,6 +27,13 @@ public class Subtarea {
     @Column(name = "fechaCreacion", nullable = false)
     private LocalDate fechaCreacion;
 
+    @PrePersist
+    protected void onCreate() {
+        if (fechaCreacion == null) {
+            this.fechaCreacion = LocalDate.now();
+        }
+    }
+
     // Constructor sin argumentos
     public Subtarea() {
     }

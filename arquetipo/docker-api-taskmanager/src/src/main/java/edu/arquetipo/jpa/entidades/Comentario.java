@@ -28,6 +28,13 @@ public class Comentario {
     @Column(name = "fecha_hora_subida")
     private LocalDateTime fechaHoraSubida;
 
+    @PrePersist
+    protected void onCreate() {
+        if (fechaHoraSubida == null) {
+            this.fechaHoraSubida = LocalDateTime.now();
+        }
+    }
+
     public Long getId() {
         return id;
     }

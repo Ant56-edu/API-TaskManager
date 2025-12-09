@@ -12,19 +12,29 @@ public class Tarea {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(name = "nombre", nullable = false)
     private String nombre;
-    @Column(name = "fechaCreacion", nullable = false)
-    private LocalDate fechaCreacion;
+
+    // ** SOLUCIÓN FINAL A LA FECHA: Inicialización directa del campo. **
+    // Esto asegura que el campo NUNCA será null al momento de la instanciación
+    // por el constructor sin argumentos de Hibernate.
+    @Column(name = "fecha_creacion", nullable = false)
+    private LocalDate fechaCreacion = LocalDate.now();
+
     @ManyToMany
     @JoinTable(name = "tarea_empleados", joinColumns = @JoinColumn(name = "tarea_id"), inverseJoinColumns = @JoinColumn(name = "usuario_id"))
     private Set<Usuario> empleadosAsignados = new HashSet<>();
+
     @ManyToOne
     @JoinColumn(name = "gestor_id") // foreign key column in Tarea table
     private Usuario gestorEncargado;
+
     private String estadoTarea;
+
     @OneToMany(mappedBy = "tareaAsociada", cascade = CascadeType.ALL)
     private Set<Subtarea> subtareas;
+
     @OneToMany(mappedBy = "tarea", cascade = CascadeType.ALL)
     private Set<Comentario> comentarios;
 
@@ -50,6 +60,8 @@ public class Tarea {
     public Tarea(String nombre, LocalDate fechaCreacion, Set<Usuario> empleadosAsignados, Usuario gestorEncargado,
             String estadoTarea) {
         this.nombre = nombre;
+        // Si se pasa una fecha, se usa, si no, se usará el valor inicializado en la
+        // declaración del campo.
         this.fechaCreacion = fechaCreacion;
         this.empleadosAsignados = empleadosAsignados;
         this.gestorEncargado = gestorEncargado;
@@ -78,6 +90,7 @@ public class Tarea {
     }
 
     public void setFechaCreacion(LocalDate fechaCreacion) {
+        // Al asignar una fecha, esta anula el valor inicializado por defecto.
         this.fechaCreacion = fechaCreacion;
     }
 

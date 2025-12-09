@@ -1,11 +1,8 @@
 package edu.arquetipo.jpa.dao;
 
-import java.util.Set;
-
 import org.springframework.stereotype.Repository;
 
 import edu.arquetipo.jpa.entidades.Tarea;
-import edu.arquetipo.jpa.entidades.Usuario;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
@@ -34,6 +31,7 @@ public class TareaDAO {
      */
     @Transactional
     public void insertar(Tarea tarea) {
+        System.out.println(tarea.toString());
         em.persist(tarea);
     }
 

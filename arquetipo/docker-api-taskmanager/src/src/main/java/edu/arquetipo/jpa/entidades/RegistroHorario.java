@@ -26,6 +26,13 @@ public class RegistroHorario {
     @Column(name = "checkOut", nullable = false)
     private LocalTime checkOut;
 
+    @PrePersist
+    protected void onCreate() {
+        if (fechaRegistro == null) {
+            this.fechaRegistro = LocalDate.now();
+        }
+    }
+
     public Long getId() {
         return id;
     }
