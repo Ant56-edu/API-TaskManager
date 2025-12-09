@@ -1,5 +1,7 @@
 package edu.arquetipo.jpa.servicios;
 
+import java.util.List;
+
 import edu.arquetipo.jpa.entidades.Tarea;
 
 public interface OperativaTareaInterfaz {
@@ -11,5 +13,7 @@ public interface OperativaTareaInterfaz {
     Tarea editarDetalles(long id, Tarea tareaActualizada);
 
     void borrarTarea(long id);
+
+    List<Tarea> listarTareas();
 
 }

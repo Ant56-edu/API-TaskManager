@@ -5,7 +5,18 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "Subtareas")
@@ -20,7 +31,8 @@ public class Subtarea {
 
     @ManyToOne
     @JoinColumn(name = "tarea_id")
-    private Tarea tareaAsociada; // must match 'mappedBy' in Tarea
+    @JsonBackReference
+    private Tarea tareaAsociada;
 
     @Column(name = "nombre", nullable = false)
     private String nombre;

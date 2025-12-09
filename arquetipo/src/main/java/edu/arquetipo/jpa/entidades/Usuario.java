@@ -1,12 +1,21 @@
 package edu.arquetipo.jpa.entidades;
 
-import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
-import java.time.format.DateTimeFormatter;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "Usuarios")
@@ -17,26 +26,45 @@ public class Usuario {
 
     @ManyToOne
     @JoinColumn(name = "idCliente")
-    Cliente cliente;
+    @JsonIgnoreProperties({ "usuarios" })
+    private Cliente cliente;
+
+    @ManyToMany(mappedBy = "empleadosAsignados")
+    @JsonIgnoreProperties({ "empleadosAsignados", "gestorEncargado", "subtareas", "comentarios" })
+    private Set<Tarea> tareasAsignadas = new HashSet<>();
+
+    @OneToMany(mappedBy = "gestorEncargado")
+    @JsonIgnoreProperties({ "empleadosAsignados", "gestorEncargado", "subtareas", "comentarios" })
+    private Set<Tarea> tareasGestionadas = new HashSet<>();
 
     @ManyToMany
-    @JoinTable(name = "Usuarios_has_Subtareas", joinColumns = @JoinColumn(name = "idSubtarea"), inverseJoinColumns = @JoinColumn(name = "idUsuario"))
-    Set<Subtarea> subtareas;
+    @JoinTable(name = "Usuarios_has_Subtareas", joinColumns = @JoinColumn(name = "idUsuario"), inverseJoinColumns = @JoinColumn(name = "idSubtarea"))
+    @JsonIgnoreProperties({ "usuariosAsignados", "tareaAsociada" })
+    private Set<Subtarea> subtareasAsignadas = new HashSet<>();
 
-    @ManyToMany
-    @JoinTable(name = "Usuarios_has_Subtareas", joinColumns = @JoinColumn(name = "idSubtarea"), inverseJoinColumns = @JoinColumn(name = "idUsuario"))
-    Set<RegistroHorario> registros;
+    @OneToMany(mappedBy = "usuario")
+    @JsonIgnoreProperties({ "usuario" })
+    private Set<RegistroHorario> registros = new HashSet<>();
+
+    @OneToMany(mappedBy = "autor")
+    @JsonIgnoreProperties({ "autor", "tarea" })
+    private Set<Comentario> comentarios = new HashSet<>();
 
     @Column(name = "nombre")
     private String nombre;
+
     @Column(name = "fechaNacimiento")
     private String fechaNacimiento;
+
     @Column(name = "rol")
     private String rol;
+
     @Column(name = "correo")
     private String correo;
+
     @Column(name = "tlf")
     private int tlf;
+
     @Column(name = "contrasena")
     private String contrasena;
 
@@ -44,7 +72,7 @@ public class Usuario {
     }
 
     public Usuario(Cliente cliente, String contrasena, String correo, String fechaNacimiento, Long id, String nombre,
-            Set<RegistroHorario> registros, String rol, Set<Subtarea> subtareas, int tlf) {
+            Set<RegistroHorario> registros, String rol, Set<Subtarea> subtareasAsignadas, int tlf) {
         this.cliente = cliente;
         this.contrasena = contrasena;
         this.correo = correo;
@@ -53,19 +81,17 @@ public class Usuario {
         this.nombre = nombre;
         this.registros = registros;
         this.rol = rol;
-        this.subtareas = subtareas;
+        this.subtareasAsignadas = subtareasAsignadas;
         this.tlf = tlf;
     }
 
     @Override
     public String toString() {
         return "Usuario [Id=" + id + "\n Nombre=" + nombre + "\n Fecha de nacimiento=" + fechaNacimiento + "\n Rol="
-                + rol
-                + "\n Email=" + correo + "\n Teléfono=" + tlf + "]";
+                + rol + "\n Email=" + correo + "\n Teléfono=" + tlf + "]";
     }
 
-    // Constructor para testing y registro de usuarios
-
+    // Getters y Setters
     public Long getId() {
         return id;
     }
@@ -130,4 +156,43 @@ public class Usuario {
         this.contrasena = contrasena;
     }
 
+    public Set<Tarea> getTareasAsignadas() {
+        return tareasAsignadas;
+    }
+
+    public void setTareasAsignadas(Set<Tarea> tareasAsignadas) {
+        this.tareasAsignadas = tareasAsignadas;
+    }
+
+    public Set<Tarea> getTareasGestionadas() {
+        return tareasGestionadas;
+    }
+
+    public void setTareasGestionadas(Set<Tarea> tareasGestionadas) {
+        this.tareasGestionadas = tareasGestionadas;
+    }
+
+    public Set<Subtarea> getSubtareasAsignadas() {
+        return subtareasAsignadas;
+    }
+
+    public void setSubtareasAsignadas(Set<Subtarea> subtareasAsignadas) {
+        this.subtareasAsignadas = subtareasAsignadas;
+    }
+
+    public Set<RegistroHorario> getRegistros() {
+        return registros;
+    }
+
+    public void setRegistros(Set<RegistroHorario> registros) {
+        this.registros = registros;
+    }
+
+    public Set<Comentario> getComentarios() {
+        return comentarios;
+    }
+
+    public void setComentarios(Set<Comentario> comentarios) {
+        this.comentarios = comentarios;
+    }
 }

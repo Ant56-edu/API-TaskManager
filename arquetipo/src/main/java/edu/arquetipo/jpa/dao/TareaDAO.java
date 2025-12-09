@@ -1,10 +1,13 @@
 package edu.arquetipo.jpa.dao;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
 import edu.arquetipo.jpa.entidades.Tarea;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 
 @Repository
@@ -63,4 +66,12 @@ public class TareaDAO {
             em.remove(tareaEncontrada);
         }
     }
+
+    @Transactional
+    public List<Tarea> buscarTodos() {
+        TypedQuery<Tarea> query;
+        query = em.createQuery("SELECT t FROM Tarea t", Tarea.class);
+        return query.getResultList();
+    }
+
 }

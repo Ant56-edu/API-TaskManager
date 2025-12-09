@@ -1,12 +1,11 @@
 package edu.arquetipo.jpa.servicios;
 
-import java.util.Set;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import edu.arquetipo.jpa.dao.TareaDAO;
 import edu.arquetipo.jpa.entidades.Tarea;
-import edu.arquetipo.jpa.entidades.Usuario;
 
 @Service
 public class OperativaTareaImplementacion implements OperativaTareaInterfaz {
@@ -37,6 +36,11 @@ public class OperativaTareaImplementacion implements OperativaTareaInterfaz {
     @Override
     public void borrarTarea(long id) {
         dao.borrar(id);
+    }
+
+    @Override
+    public List<Tarea> listarTareas() {
+        return dao.buscarTodos();
     }
 
 }

@@ -4,6 +4,9 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,26 +21,37 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "Tareas")
+@Table(name = "tareas")
 public class Tarea {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(name = "nombre", nullable = false)
     private String nombre;
+
     @Column(name = "fechaCreacion", nullable = false)
     private LocalDate fechaCreacion = LocalDate.now();
+
     @ManyToMany
     @JoinTable(name = "tarea_empleados", joinColumns = @JoinColumn(name = "tarea_id"), inverseJoinColumns = @JoinColumn(name = "usuario_id"))
+    @JsonIgnoreProperties({ "tareasAsignadas", "tareasGestionadas", "subtareasAsignadas", "comentarios" })
     private Set<Usuario> empleadosAsignados = new HashSet<>();
+
     @ManyToOne
-    @JoinColumn(name = "gestor_id") // foreign key column in Tarea table
+    @JoinColumn(name = "gestor_id")
+    @JsonIgnoreProperties({ "tareasAsignadas", "tareasGestionadas", "subtareasAsignadas", "comentarios" })
     private Usuario gestorEncargado;
+
     private String estadoTarea;
+
     @OneToMany(mappedBy = "tareaAsociada", cascade = CascadeType.ALL)
-    private Set<Subtarea> subtareas;
+    @JsonManagedReference
+    private Set<Subtarea> subtareas = new HashSet<>();
+
     @OneToMany(mappedBy = "tarea", cascade = CascadeType.ALL)
-    private Set<Comentario> comentarios;
+    @JsonManagedReference
+    private Set<Comentario> comentarios = new HashSet<>();
 
     @Override
     public String toString() {
@@ -48,7 +62,7 @@ public class Tarea {
         sb.append(", fechaCreacion=").append(fechaCreacion);
         sb.append(", empleadosAsignados=").append(empleadosAsignados);
         sb.append(", gestorEncargado=").append(gestorEncargado);
-        sb.append(", estadoTarea").append(estadoTarea);
+        sb.append(", estadoTarea=").append(estadoTarea);
         sb.append('}');
         return sb.toString();
     }
@@ -116,4 +130,19 @@ public class Tarea {
         this.estadoTarea = estadoTarea;
     }
 
+    public Set<Subtarea> getSubtareas() {
+        return subtareas;
+    }
+
+    public void setSubtareas(Set<Subtarea> subtareas) {
+        this.subtareas = subtareas;
+    }
+
+    public Set<Comentario> getComentarios() {
+        return comentarios;
+    }
+
+    public void setComentarios(Set<Comentario> comentarios) {
+        this.comentarios = comentarios;
+    }
 }

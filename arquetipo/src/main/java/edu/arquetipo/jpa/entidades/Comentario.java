@@ -2,7 +2,16 @@ package edu.arquetipo.jpa.entidades;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "Comentarios")
@@ -17,11 +26,12 @@ public class Comentario {
 
     @ManyToOne
     @JoinColumn(name = "tarea_id")
-    private Tarea tarea; // This is the field name
+    @JsonBackReference
+    private Tarea tarea;
 
     @Column(name = "id_tarea")
     private Long idTarea;
-    @Column(name = "id_usuario")
+    @Column(name = "autor")
     private Long idUsuario;
     @Column(name = "contenido")
     private String contenido;

@@ -1,6 +1,5 @@
 package edu.arquetipo.jpa.controladores;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,12 +37,9 @@ public class TareaControlador {
 
     // Get all products.
     @GetMapping("/listado")
-    public List<Tarea> getAllProducts() {
-        List<Tarea> listaTareas = new ArrayList<>();
-        for (Tarea tarea : listaTareas) {
-            listaTareas.add(tareaInterfaz.buscarTarea(tarea.getId()));
-        }
-        return listaTareas;
+    public ResponseEntity<List<Tarea>> getAllProducts() {
+        List<Tarea> listaTareas = tareaInterfaz.listarTareas();
+        return ResponseEntity.ok(listaTareas);
     }
 
     // Get a product by ID.
