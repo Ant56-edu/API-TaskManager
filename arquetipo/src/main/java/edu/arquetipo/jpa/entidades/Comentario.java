@@ -31,8 +31,6 @@ public class Comentario {
 
     @Column(name = "id_tarea")
     private Long idTarea;
-    @Column(name = "autor")
-    private Long idUsuario;
     @Column(name = "contenido")
     private String contenido;
     @Column(name = "fecha_hora_subida")
@@ -52,14 +50,6 @@ public class Comentario {
 
     public void setIdTarea(Long idTarea) {
         this.idTarea = idTarea;
-    }
-
-    public Long getIdUsuario() {
-        return idUsuario;
-    }
-
-    public void setIdUsuario(Long idUsuario) {
-        this.idUsuario = idUsuario;
     }
 
     public String getContenido() {
@@ -85,7 +75,6 @@ public class Comentario {
         this.contenido = contenido;
         this.fechaHoraSubida = fechaHoraSubida;
         this.idTarea = idTarea;
-        this.idUsuario = idUsuario;
     }
 
     @Override
@@ -94,7 +83,6 @@ public class Comentario {
         sb.append("Comentario{");
         sb.append("id=").append(id);
         sb.append(", idTarea=").append(idTarea);
-        sb.append(", idUsuario=").append(idUsuario);
         sb.append(", contenido=").append(contenido);
         sb.append(", fechaHoraSubida=").append(fechaHoraSubida);
         sb.append('}');

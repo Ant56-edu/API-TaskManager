@@ -42,12 +42,12 @@ public class Usuario {
     @JsonIgnoreProperties({ "usuariosAsignados", "tareaAsociada" })
     private Set<Subtarea> subtareasAsignadas = new HashSet<>();
 
-    @OneToMany(mappedBy = "usuario")
-    @JsonIgnoreProperties({ "usuario" })
+    @OneToMany(mappedBy = "usuarios")
+    @JsonIgnoreProperties({ "usuarios" })
     private Set<RegistroHorario> registros = new HashSet<>();
 
-    @OneToMany(mappedBy = "autor")
-    @JsonIgnoreProperties({ "autor", "tarea" })
+    @OneToMany(mappedBy = "usuario")
+    @JsonIgnoreProperties({ "usuario", "tarea" })
     private Set<Comentario> comentarios = new HashSet<>();
 
     @Column(name = "nombre")
