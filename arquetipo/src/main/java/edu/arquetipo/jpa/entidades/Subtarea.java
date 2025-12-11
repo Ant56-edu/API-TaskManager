@@ -37,7 +37,7 @@ public class Subtarea {
     @Column(name = "nombre", nullable = false)
     private String nombre;
     @Column(name = "fechaCreacion", nullable = false)
-    private LocalDate fechaCreacion;
+    private LocalDate fechaCreacion = LocalDate.now();
 
     // Constructor sin argumentos
     public Subtarea() {

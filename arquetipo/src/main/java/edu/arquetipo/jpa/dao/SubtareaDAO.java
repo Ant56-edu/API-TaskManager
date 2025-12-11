@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import edu.arquetipo.jpa.entidades.Subtarea;
+import edu.arquetipo.jpa.entidades.Tarea;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
@@ -94,5 +95,12 @@ public class SubtareaDAO {
         if (subtareaEncontrada != null) {
             em.remove(subtareaEncontrada);
         }
+    }
+
+    @Transactional
+    public List<Subtarea> buscarTodos() {
+        TypedQuery<Subtarea> query;
+        query = em.createQuery("SELECT s FROM Subtarea s", Subtarea.class);
+        return query.getResultList();
     }
 }
